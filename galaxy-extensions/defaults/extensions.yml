@@ -1,0 +1,17 @@
+# Variables used to template extensions
+
+# lab_switcher
+# -----------------------------------------------------------------------------
+galaxy_base_domain: "usegalaxy.org"
+galaxy_labs: []
+  # - name: example          # Should be the domain name
+  #   brand: "Example Lab"   # Display name
+  #   hidden: false
+
+
+# toolmsg
+# -----------------------------------------------------------------------------
+toolmsg_messages: []
+  # - tool_id: toolshed.g2.bx.psu.edu/repos/galaxyp/diann/diann
+  #   message: Access rights to this tool have changed, please apply for access
+  #   class: warning

@@ -1,0 +1,63 @@
+- name: Ensure destination directory exists
+  file:
+    path: "{{ galaxy_extensions_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Collect paths of extensions to install
+  set_fact:
+    extension_paths: >-
+      {{ extension_paths | default([]) + [
+        'extensions/' +
+        item.name + '/'
+      ] }}
+  loop: "{{ galaxy_extensions_enabled }}"
+  debug: var=extension_paths
+
+- name: Select appropriate version for each extension based on Galaxy version
+  select_extension_versions:
+    paths: "{{ extension_paths }}"
+    galaxy_version: "{{ galaxy_version }}"
+  register: extension_version_paths
+  debug: var=extension_version_paths
+
+- name: Template/copy enabled extensions
+  block:
+    - name: Find all files under each extension path
+      ansible.builtin.find:
+        paths: "{{ item }}"
+        recurse: yes
+      register: found_files
+      loop: "{{ extension_version_paths }}"
+
+    - name: Template jinja2 files
+      ansible.builtin.template:
+        src: "{{ file.path }}"
+        dest: "{{ dest_dir }}/{{ file.path | basename | regex_replace('\\.j2$', '') }}"
+      loop: "{{ found_files.results | map(attribute='files') | flatten | selectattr('path', 'search', '\\.j2$') | list }}"
+      loop_control:
+        loop_var: file
+      notify: Restart Galaxy
+
+    - name: Copy non-template files
+      ansible.builtin.copy:
+        src: "{{ file.path }}"
+        dest: "{{ dest_dir }}/{{ file.path | basename }}"
+      loop: "{{ found_files.results | map(attribute='files') | flatten | rejectattr('path', 'search', '\\.j2$') | list }}"
+      loop_control:
+        loop_var: file
+      notify: Restart Galaxy
+
+- name: Collect existing extension directories
+  shell: ls -1 {{ galaxy_extensions_dir }}
+  register: existing_extension_dirs
+
+- name: Remove old extension directories
+  file:
+    path: "{{ galaxy_extensions_dir }}/{{ item }}"
+    state: absent
+  with_items: "{{ existing_extension_dirs.stdout_lines }}"
+  when: "item not in (webhook_plugins + galaxy_default_extensions)"
+  notify: Restart Galaxy

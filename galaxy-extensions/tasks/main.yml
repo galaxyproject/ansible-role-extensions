@@ -11,18 +11,17 @@
   ansible.builtin.set_fact:
     extension_paths: >-
       {{ extension_paths | default([]) + [
-        role_path + '/templates/extensions/' +
+        galaxy_extensions_base_path + '/templates/extensions/' +
         item.name + '/'
       ] }}
   loop: "{{ galaxy_extensions_enabled }}"
-  delegate_to: localhost
 
 - name: Select appropriate version for each extension based on Galaxy version
   select_extension_versions:
     paths: "{{ extension_paths }}"
     galaxy_version: "{{ galaxy_version }}"
-  register: extension_version_paths_result
   delegate_to: localhost
+  register: extension_version_paths_result
 
 - name: Extract version paths from module result
   ansible.builtin.set_fact:

@@ -4,6 +4,9 @@ galaxy_extensions_dir: '{{ galaxy_mutable_data_dir }}/webhooks'
 galaxy_extensions_enabled: []
 # - example_extension_id
 
+# Base path for extension templates (can be overridden for testing)
+galaxy_extensions_base_path: "{{ role_path }}"
+
 # These extensions will be ignored by the role
 galaxy_default_extensions:
   - demo

@@ -178,14 +178,25 @@ Tests Galaxy version selection logic:
 ## Continuous Integration
 
 Tests run automatically on:
-- Push to `main` or `develop` branches
-- Pull requests to `main` or `develop`
+- Push to `main` branch
+- Pull requests to `main`
 - Manual workflow dispatch
 
 CI runs:
 - Linting (yamllint, ansible-lint)
-- Unit tests (Python 3.9, 3.10, 3.11, 3.12)
-- All Molecule scenarios
+- Unit tests (Python 3.10, 3.11, 3.12, 3.13)
+
+**Note**: Molecule integration tests are **not run in CI** due to Python interpreter discovery issues when delegating tasks from Docker containers to GitHub Actions runners. The custom Ansible module requires access to role template files on the controller, which necessitates delegation to localhost. However, Ansible's interpreter auto-discovery doesn't work correctly in this delegated context in GitHub Actions.
+
+**Molecule tests work perfectly when run locally** and should be run before merging changes:
+
+```bash
+make test-molecule
+# or
+molecule test -s default
+molecule test -s templating
+molecule test -s versions
+```
 
 ## Cleanup
 

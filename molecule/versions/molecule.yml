@@ -14,10 +14,11 @@ platforms:
     cgroupns_mode: host
 provisioner:
   name: ansible
+  env:
+    ANSIBLE_ROLES_PATH: "${MOLECULE_PROJECT_DIRECTORY}"
   config_options:
     defaults:
       callbacks_enabled: ansible.posix.profile_tasks
-      roles_path: ${MOLECULE_PROJECT_DIRECTORY}
   inventory:
     host_vars:
       ubuntu2204:

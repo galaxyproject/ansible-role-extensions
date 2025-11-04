@@ -30,4 +30,4 @@ that is less than or equal to the Galaxy version on the host.
 Any extension can be templated by adding a .j2 extension to the file name. Any
 variables available in the running playbook can be used, but defaults should be
 set in defaults/extensions.yml to ensure predictable results, and document the
-variables being used for Galaxy admins.
+variables being used for users of the Ansible role.

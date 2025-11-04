@@ -3,7 +3,7 @@ galaxy_extensions_dir: '{{ galaxy_mutable_data_dir }}/webhooks'
 galaxy_extensions_enabled: []
   # - example_extension_id
 
-# Don't remove these extensions from the extensions dir
+# These extensions will be ignored by the role
 galaxy_default_extensions:
   - demo
   - gtn

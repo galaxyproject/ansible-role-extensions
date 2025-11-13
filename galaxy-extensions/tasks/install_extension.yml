@@ -5,6 +5,10 @@
     dest_dir: "{{ galaxy_extensions_dir }}/{{ extension_item.0 }}"
     extension_path: "{{ extension_item.1 }}"
 
+- name: Debug extension installation path
+  ansible.builtin.debug:
+    msg: "Installing extension {{ extension_name }} to {{ dest_dir }} from {{ extension_path }}"
+
 - name: Ensure extension subdirectory exists
   ansible.builtin.file:
     path: "{{ dest_dir }}"
@@ -15,6 +19,8 @@
   ansible.builtin.find:
     paths: "{{ extension_path }}"
     recurse: yes
+  delegate_to: localhost
+  run_once: true
   register: found_files
 
 - name: Template jinja2 files
@@ -25,7 +31,7 @@
   loop: "{{ found_files.files | selectattr('path', 'search', '\\.j2$') | list }}"
   loop_control:
     loop_var: file
-  notify: Restart Galaxy
+  notify: restart galaxy
 
 - name: Copy non-template files
   ansible.builtin.copy:
@@ -35,4 +41,4 @@
   loop: "{{ found_files.files | rejectattr('path', 'search', '\\.j2$') | list }}"
   loop_control:
     loop_var: file
-  notify: Restart Galaxy
+  notify: restart galaxy

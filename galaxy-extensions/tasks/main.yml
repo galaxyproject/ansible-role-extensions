@@ -11,14 +11,44 @@
     group: "{{ galaxy_extensions_group }}"
     mode: '0755'
 
+- name: Check for builtin extensions
+  ansible.builtin.stat:
+    path: "{{ galaxy_extensions_builtin_dir }}/{{ item }}"
+  register: builtin_extension_check
+  loop: "{{ galaxy_extensions_enabled }}"
+
+- name: Collect paths of builtin extensions
+  ansible.builtin.set_fact:
+    galaxy_builtin_extension_paths: >-
+      {{ galaxy_builtin_extension_paths | default([]) + [item.stat.path + '/'] }}
+  loop: "{{ builtin_extension_check.results }}"
+  when: item.stat.exists
+
+- name: debug builtin extension paths
+  ansible.builtin.debug:
+    msg: "Builtin extension path: {{ item }}"
+  loop: "{{ galaxy_builtin_extension_paths | default([]) }}"
+
 - name: Collect paths of extensions to install
   ansible.builtin.set_fact:
     extension_paths: >-
       {{ extension_paths | default([]) + [
         galaxy_extensions_base_path + '/templates/extensions/' +
-        item + '/'
+        item.item + '/'
       ] }}
-  loop: "{{ galaxy_extensions_enabled }}"
+  loop: "{{ builtin_extension_check.results }}"
+  when: not item.stat.exists
+
+- name: Install builtin extensions
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ galaxy_extensions_dir }}/"
+    owner: "{{ galaxy_extensions_owner }}"
+    group: "{{ galaxy_extensions_group }}"
+    mode: '0755'
+    remote_src: true
+  loop: "{{ galaxy_builtin_extension_paths | default([]) }}"
+  notify: restart galaxy
 
 - name: Select appropriate version for each extension based on Galaxy version
   select_extension_versions:
@@ -47,5 +77,5 @@
     path: "{{ galaxy_extensions_dir }}/{{ item }}"
     state: absent
   with_items: "{{ existing_extension_dirs.stdout_lines }}"
-  when: "item not in (galaxy_extensions_enabled + galaxy_default_extensions)"
-  notify: Restart Galaxy
+  when: "item not in galaxy_extensions_enabled"
+  notify: restart galaxy

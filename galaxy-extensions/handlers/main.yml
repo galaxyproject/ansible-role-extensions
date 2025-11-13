@@ -1,4 +1,0 @@
----
-- name: Restart Galaxy
-  ansible.builtin.debug:
-    msg: "Galaxy would be restarted here (handler placeholder)"

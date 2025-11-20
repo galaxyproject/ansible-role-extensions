@@ -24,7 +24,7 @@ galaxy_info:
     - webhooks
     - plugins
     - extensions
-    - galaxy-project
+    - galaxyproject
 
 dependencies:
   - galaxyproject.galaxy

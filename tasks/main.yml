@@ -45,7 +45,8 @@
   ansible.builtin.shell:
     cmd: |
       cp -r "{{ item | regex_replace('/+$', '') }}" "{{ galaxy_extensions_dir }}/"
-      chown -R {{ galaxy_extensions_owner }}:{{ galaxy_extensions_group }} "{{ galaxy_extensions_dir }}/{{ item | basename }}"
+      chown -R {{ galaxy_extensions_owner }}:{{ galaxy_extensions_group }} \
+        "{{ galaxy_extensions_dir }}/{{ item | basename }}"
   loop: "{{ galaxy_builtin_extension_paths | default([]) }}"
   notify: restart galaxy
 

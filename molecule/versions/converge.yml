@@ -16,9 +16,9 @@
       when: ansible_os_family == 'Debian'
 
   tasks:
-    - name: Include galaxy-extensions role with latest version
+    - name: Include extensions-ansible-role role with latest version
       include_role:
-        name: galaxy-extensions
+        name: extensions-ansible-role
 
 - name: Test with specific version 24.1
   hosts: all
@@ -30,9 +30,9 @@
     galaxy_version: "24.1"
 
   tasks:
-    - name: Include galaxy-extensions role with version 24.1
+    - name: Include extensions-ansible-role role with version 24.1
       include_role:
-        name: galaxy-extensions
+        name: extensions-ansible-role
 
 - name: Test with older version 22.05
   hosts: all
@@ -44,9 +44,9 @@
     galaxy_version: "22.05"
 
   tasks:
-    - name: Include galaxy-extensions role with version 22.05
+    - name: Include extensions-ansible-role role with version 22.05
       include_role:
-        name: galaxy-extensions
+        name: extensions-ansible-role
 
 - name: Test with future version (should use latest available)
   hosts: all
@@ -57,9 +57,9 @@
     galaxy_version: "99.0"
 
   tasks:
-    - name: Include galaxy-extensions role with future version
+    - name: Include extensions-ansible-role role with future version
       include_role:
-        name: galaxy-extensions
+        name: extensions-ansible-role
 
 - name: Test with intermediate version (should select compatible version)
   hosts: all
@@ -70,6 +70,6 @@
     galaxy_version: "23.5"
 
   tasks:
-    - name: Include galaxy-extensions role with intermediate version
+    - name: Include extensions-ansible-role role with intermediate version
       include_role:
-        name: galaxy-extensions
+        name: extensions-ansible-role

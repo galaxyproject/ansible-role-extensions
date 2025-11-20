@@ -44,6 +44,6 @@
       when: ansible_os_family == 'Debian'
 
   tasks:
-    - name: Include galaxy-extensions role
+    - name: Include extensions-ansible-role role
       include_role:
-        name: galaxy-extensions
+        name: extensions-ansible-role

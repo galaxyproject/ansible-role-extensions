@@ -1,0 +1,30 @@
+---
+galaxy_info:
+  role_name: galaxy_extensions
+  namespace: usegalaxy_au
+  author: Cameron Hyde
+  description: |
+    Deploy Galaxy extensions (a.k.a webhooks) to Galaxy servers with
+    version support
+  company: Galaxy Australia
+
+  license: MIT
+
+  min_ansible_version: "2.16"
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+        - noble
+
+  galaxy_tags:
+    - galaxy
+    - webhooks
+    - plugins
+    - extensions
+    - galaxy-project
+
+dependencies:
+  - galaxyproject.galaxy

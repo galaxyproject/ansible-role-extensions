@@ -23,18 +23,18 @@ install:
 test: test-unit test-molecule
 
 test-unit:
-	pytest galaxy-extensions/tests/unit/ -v
+	pytest tests/unit/ -v
 
 test-molecule: test-default test-templating test-versions
 
 test-default:
-	cd galaxy-extensions && molecule test -s default
+	molecule test -s default
 
 test-templating:
-	cd galaxy-extensions && molecule test -s templating
+	molecule test -s templating
 
 test-versions:
-	cd galaxy-extensions && molecule test -s versions
+	molecule test -s versions
 
 lint: lint-yaml lint-ansible
 
@@ -42,7 +42,7 @@ lint-yaml:
 	yamllint .
 
 lint-ansible:
-	ansible-lint galaxy-extensions/
+	ansible-lint .
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
@@ -51,6 +51,6 @@ clean:
 	find . -type d -name htmlcov -exec rm -rf {} + 2>/dev/null || true
 	find . -type f -name coverage.xml -delete
 	find . -type f -name .coverage -delete
-	cd galaxy-extensions && molecule destroy -s default 2>/dev/null || true
-	cd galaxy-extensions && molecule destroy -s templating 2>/dev/null || true
-	cd galaxy-extensions && molecule destroy -s versions 2>/dev/null || true
+	molecule destroy -s default 2>/dev/null || true
+	molecule destroy -s templating 2>/dev/null || true
+	molecule destroy -s versions 2>/dev/null || true

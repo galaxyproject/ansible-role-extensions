@@ -2,7 +2,7 @@
     "python.testing.unittestArgs": [
         "-v",
         "-s",
-        "./galaxy-extensions",
+        ".",
         "-p",
         "test*.py"
     ],

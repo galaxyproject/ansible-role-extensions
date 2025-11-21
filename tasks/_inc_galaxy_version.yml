@@ -22,6 +22,9 @@
                 | select('match', 'VERSION_MINOR\s*=.*') | first
                 | regex_replace('^[^\d]+([.\d]+).*', '\1')
         }}
+
+- name: Build Galaxy version from major/minor versions
+  set_fact:
     galaxy_version: "{{ __galaxy_major_version + '.' + __galaxy_minor_version }}"
   when: galaxy_server_dir is defined
 

@@ -1,0 +1,31 @@
+# Determine Galaxy version
+
+# Currently only used by mutable config setup but placed in an include because it'll probably be used by more
+
+- name: Collect Galaxy version file
+  slurp:
+    src: "{{ galaxy_server_dir }}/lib/galaxy/version.py"
+  register: __galaxy_version_file
+  when: galaxy_server_dir is defined
+
+- name: Determine Galaxy version
+  set_fact:
+    __galaxy_major_version: >-
+        {{
+            (__galaxy_version_file['content'] | b64decode).splitlines()
+                | select('match', 'VERSION_MAJOR\s*=.*') | first
+                | regex_replace('^[^\d]+([.\d]+).*', '\1')
+        }}
+    __galaxy_minor_version: >-
+        {{
+            (__galaxy_version_file['content'] | b64decode).splitlines()
+                | select('match', 'VERSION_MINOR\s*=.*') | first
+                | regex_replace('^[^\d]+([.\d]+).*', '\1')
+        }}
+    galaxy_version: "{{ __galaxy_major_version + '.' + __galaxy_minor_version }}"
+  when: galaxy_server_dir is defined
+
+- name: Debug Galaxy version
+  ansible.builtin.debug:
+    msg: "Determined Galaxy version {{ galaxy_version }}"
+  when: galaxy_server_dir is defined

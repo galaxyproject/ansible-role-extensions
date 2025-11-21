@@ -1,4 +1,8 @@
 ---
+
+- name: Include Galaxy version determination
+  ansible.builtin.include_tasks: _inc_galaxy_version.yml
+
 - name: Show galaxy version
   ansible.builtin.debug:
     msg: "Installing extensions for Galaxy version {{ galaxy_version }}"

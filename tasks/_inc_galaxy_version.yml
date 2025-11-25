@@ -1,9 +1,10 @@
+---
 # Determine Galaxy version
 
 # Currently only used by mutable config setup but placed in an include because it'll probably be used by more
 
 - name: Collect Galaxy version file
-  slurp:
+  ansible.builtin.slurp:
     src: "{{ galaxy_server_dir }}/lib/galaxy/version.py"
   register: __galaxy_version_file
   when:
@@ -12,7 +13,7 @@
   failed_when: false
 
 - name: Determine Galaxy version
-  set_fact:
+  ansible.builtin.set_fact:
     galaxy_version: >-
         {{
             (__galaxy_version_file['content'] | b64decode).splitlines()

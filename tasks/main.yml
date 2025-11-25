@@ -12,9 +12,15 @@
     repo: "{{ galaxy_extensions_repo_url }}"
     dest: "{{ galaxy_extensions_repo_dir }}"
     version: "{{ galaxy_extensions_repo_version }}"
+    update: yes
     force: yes
+    accept_hostkey: yes
   delegate_to: localhost
   run_once: true
+  environment:
+    GIT_CONFIG_COUNT: "1"
+    GIT_CONFIG_KEY_0: "safe.directory"
+    GIT_CONFIG_VALUE_0: "{{ galaxy_extensions_repo_dir }}"
 
 - name: Ensure destination directory exists
   ansible.builtin.file:
@@ -61,6 +67,7 @@
       chown -R {{ galaxy_extensions_owner }}:{{ galaxy_extensions_group }} \
         "{{ galaxy_extensions_dir }}/{{ item | basename }}"
   loop: "{{ galaxy_builtin_extension_paths | default([]) }}"
+  changed_when: true
   notify: restart galaxy
 
 - name: Select appropriate version for each extension based on Galaxy version

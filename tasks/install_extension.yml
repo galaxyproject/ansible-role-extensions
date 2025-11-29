@@ -20,6 +20,7 @@
     paths: "{{ extension_path }}"
     recurse: true
   connection: local
+  become: false
   run_once: true
   register: found_files
 

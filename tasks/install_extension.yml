@@ -15,18 +15,26 @@
     state: directory
     mode: '0755'
 
-- name: Find all files under extension path
+- name: Find all files under extension path on remote
   ansible.builtin.find:
     paths: "{{ extension_path }}"
     recurse: true
-  connection: local
-  become: false
   run_once: true
   register: found_files
 
-- name: Template jinja2 files
-  ansible.builtin.template:
+- name: Fetch template files to controller
+  ansible.builtin.fetch:
     src: "{{ file.path }}"
+    dest: "{{ galaxy_extensions_local_template_dir }}/{{ extension_name }}/{{ file.path | basename }}"
+    flat: true
+  loop: "{{ found_files.files | selectattr('path', 'search', '\\.j2$') | list }}"
+  loop_control:
+    loop_var: file
+  run_once: true
+
+- name: Template jinja2 files from controller
+  ansible.builtin.template:
+    src: "{{ galaxy_extensions_local_template_dir }}/{{ extension_name }}/{{ file.path | basename }}"
     dest: "{{ dest_dir }}/{{ file.path | basename | regex_replace('\\.j2$', '') }}"
     mode: '0644'
   loop: "{{ found_files.files | selectattr('path', 'search', '\\.j2$') | list }}"
@@ -34,11 +42,12 @@
     loop_var: file
   notify: restart galaxy
 
-- name: Copy non-template files
+- name: Copy non-template files from remote
   ansible.builtin.copy:
     src: "{{ file.path }}"
     dest: "{{ dest_dir }}/{{ file.path | basename }}"
     mode: '0644'
+    remote_src: true
   loop: "{{ found_files.files | rejectattr('path', 'search', '\\.j2$') | list }}"
   loop_control:
     loop_var: file

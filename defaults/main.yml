@@ -10,6 +10,7 @@ galaxy_extensions_enabled: []  # Extension IDs (see https://github.com/usegalaxy
 galaxy_extensions_repo_url: "https://github.com/usegalaxy-au/galaxy-extensions.git"
 galaxy_extensions_repo_version: "main"
 galaxy_extensions_repo_dir: "/tmp/galaxy-extensions"
+galaxy_extensions_local_template_dir: "/tmp/galaxy-extensions"
 
 # Owner and group for extension directories
 galaxy_extensions_owner: root

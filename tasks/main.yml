@@ -3,7 +3,7 @@
 - name: Include Galaxy version determination
   ansible.builtin.include_tasks: _inc_galaxy_version.yml
 
-- name: Clone galaxy-extensions repository
+- name: Clone galaxy-extensions repository on remote
   ansible.builtin.git:
     repo: "{{ galaxy_extensions_repo_url }}"
     dest: "{{ galaxy_extensions_repo_dir }}"
@@ -11,13 +11,18 @@
     update: true
     force: true
     accept_hostkey: true
-  connection: local
-  become: false
-  run_once: true
   environment:
     GIT_CONFIG_COUNT: "1"
     GIT_CONFIG_KEY_0: "safe.directory"
     GIT_CONFIG_VALUE_0: "{{ galaxy_extensions_repo_dir }}"
+
+- name: Ensure local template directory exists on controller
+  ansible.builtin.file:
+    path: "{{ galaxy_extensions_local_template_dir }}"
+    state: directory
+    mode: '0755'
+  connection: local
+  run_once: true
 
 - name: Ensure destination directory exists
   ansible.builtin.file:
@@ -71,8 +76,7 @@
   select_extension_versions:
     paths: "{{ extension_paths }}"
     galaxy_version: "{{ galaxy_version }}"
-  connection: local
-  become: false
+  run_once: true
   register: extension_version_paths_result
 
 - name: Extract version paths from module result

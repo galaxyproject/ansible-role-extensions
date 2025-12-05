@@ -101,3 +101,10 @@
   with_items: "{{ existing_extension_dirs.stdout_lines }}"
   when: "item not in galaxy_extensions_enabled"
   notify: restart galaxy
+
+- name: Clean up local template directory on controller
+  ansible.builtin.file:
+    path: "{{ galaxy_extensions_local_template_dir }}"
+    state: absent
+  connection: local
+  run_once: true

@@ -22,6 +22,7 @@
     state: directory
     mode: '0755'
   connection: local
+  become: false
   run_once: true
 
 - name: Ensure destination directory exists
@@ -107,4 +108,5 @@
     path: "{{ galaxy_extensions_local_template_dir }}"
     state: absent
   connection: local
+  become: false
   run_once: true

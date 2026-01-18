@@ -33,6 +33,16 @@
     group: "{{ galaxy_extensions_group }}"
     mode: '0755'
 
+- name: Check if galaxy_extensions_builtin_dir exists
+  ansible.builtin.stat:
+    path: "{{ galaxy_extensions_builtin_dir }}"
+  register: builtin_dir_check
+
+- name: Fail if galaxy_extensions_builtin_dir does not exist
+  ansible.builtin.fail:
+    msg: "The builtin extensions directory {{ galaxy_extensions_builtin_dir }} does not exist. Please set galaxy_extensions_builtin_dir to the directory that contains Galaxy's default extensions (usually config/plugins/webhooks)."
+  when: builtin_dir_check.stat.exists == False
+
 - name: Check for builtin extensions
   ansible.builtin.stat:
     path: "{{ galaxy_extensions_builtin_dir }}/{{ item }}"
@@ -63,12 +73,29 @@
   loop: "{{ builtin_extension_check.results }}"
   when: not item.stat.exists
 
+- name: Check if extension paths exist
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  register: extension_path_check
+  loop: "{{ extension_paths | default([]) }}"
+
+- name: Fail if any extension paths do not exist
+  ansible.builtin.fail:
+    msg: >
+      Requested extension does not exist: "{{ item.item | regex_replace('/+$', '') | basename }}". This extension
+      was not found in either the builtin extensions directory
+      ({{ galaxy_extensions_builtin_dir }}) or extensions repo
+      ({{ galaxy_extensions_repo_url }}). Please correct or remove this
+      extension name from your "galaxy_extensions_enabled" var.
+  loop: "{{ extension_path_check.results }}"
+  when: not item.stat.exists
+
 - name: Install builtin extensions
   ansible.builtin.shell:
     cmd: |
       cp -r "{{ item | regex_replace('/+$', '') }}" "{{ galaxy_extensions_dir }}/"
       chown -R {{ galaxy_extensions_owner }}:{{ galaxy_extensions_group }} \
-        "{{ galaxy_extensions_dir }}/{{ item | basename }}"
+        "{{ galaxy_extensions_dir }}/{{ item | regex_replace('/+$', '') | basename }}"
   loop: "{{ galaxy_builtin_extension_paths | default([]) }}"
   changed_when: true
   notify: restart galaxy

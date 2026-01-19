@@ -26,5 +26,18 @@ provisioner:
       localhost:
         ansible_connection: local
         ansible_python_interpreter: auto_silent
+scenario:
+  test_sequence:
+    - dependency
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - side_effect
+    - verify
+    - cleanup
+    - destroy
 verifier:
   name: ansible

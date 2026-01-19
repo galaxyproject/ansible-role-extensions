@@ -18,6 +18,25 @@
         cache_valid_time: 3600
       when: ansible_os_family == 'Debian'
 
+    - name: Install git
+      apt:
+        name: git
+        state: present
+      when: ansible_os_family == 'Debian'
+
+    - name: Create Galaxy server directory structure
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - "{{ galaxy_server_dir }}"
+        - "{{ galaxy_server_dir }}/config"
+        - "{{ galaxy_server_dir }}/config/plugins"
+        - "{{ galaxy_server_dir }}/config/plugins/webhooks"
+        - "{{ galaxy_mutable_data_dir }}"
+        - "{{ galaxy_config_dir }}"
+
   tasks:
     - name: Include extensions-ansible-role role
       include_role:

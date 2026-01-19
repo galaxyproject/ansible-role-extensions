@@ -40,8 +40,11 @@
 
 - name: Fail if galaxy_extensions_builtin_dir does not exist
   ansible.builtin.fail:
-    msg: "The builtin extensions directory {{ galaxy_extensions_builtin_dir }} does not exist. Please set galaxy_extensions_builtin_dir to the directory that contains Galaxy's default extensions (usually config/plugins/webhooks)."
-  when: builtin_dir_check.stat.exists == False
+    msg: >
+      The builtin extensions directory {{ galaxy_extensions_builtin_dir }} does not exist.
+      Please set galaxy_extensions_builtin_dir to the directory that contains Galaxy's default
+      extensions (usually config/plugins/webhooks).
+  when: not builtin_dir_check.stat.exists
 
 - name: Check for builtin extensions
   ansible.builtin.stat:
